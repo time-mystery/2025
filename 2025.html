@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025年跨年倒计时</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            color: #fff;
+            text-shadow: 0 0 5px #0ff,
+                         0 0 10px #0ff,
+                         0 0 20px #0ff,
+                         0 0 40px #0ff,
+                         0 0 80px #0ff;
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #0ff,
+                             0 0 10px #0ff,
+                             0 0 20px #0ff,
+                             0 0 30px #0ff,
+                             0 0 40px #0ff;
+            }
+            to {
+                text-shadow: 0 0 10px #0ff,
+                             0 0 20px #0ff,
+                             0 0 30px #0ff,
+                             0 0 40px #0ff,
+                             0 0 50px #0ff;
+            }
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .countdown {
+            display: flex;
+            gap: 20px;
+        }
+
+        .time-block {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            min-width: 100px;
+            box-shadow: 0 8px 32px 0 rgba(0, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .time-block:hover {
+            transform: translateY(-5px) rotateX(10deg);
+            box-shadow: 0 15px 35px rgba(0, 255, 255, 0.3);
+        }
+
+        .number {
+            font-size: 3.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            background: linear-gradient(45deg, #00ffff, #00ccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(0,255,255,0.3);
+        }
+
+        .label {
+            font-size: 1.2em;
+            color: #fff;
+            text-shadow: 0 0 8px rgba(0,255,255,0.8);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .animated {
+            animation: pulse 1s infinite;
+        }
+
+        .countdowns-container {
+            display: flex;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .countdown-section {
+            text-align: center;
+            transition: all 0.5s ease;
+        }
+
+        .countdown-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #0ff,
+                         0 0 10px #0ff;
+        }
+
+        .hidden {
+            display: none;
+            opacity: 0;
+        }
+
+        .centered {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 1;
+        }
+
+        #fireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .debug-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            font-size: 14px;
+            z-index: 3;
+        }
+
+        .debug-btn:hover {
+            background: rgba(0, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        canvas {
+            filter: blur(0.5px);
+        }
+
+        .celebration-text {
+            font-size: 3em;
+            background: linear-gradient(120deg, #ff0000, #ffff00, #00ff00, #00ffff, #ff00ff);
+            background-size: 200% auto;
+            color: #fff;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 2s linear infinite;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .final-countdown {
+            animation: finalPulse 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes finalPulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .music-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .music-btn:hover {
+            transform: scale(1.1);
+            color: #0ff;
+        }
+
+        .danmaku {
+            position: fixed;
+            white-space: nowrap;
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+            pointer-events: none;
+            z-index: 1;
+            opacity: 1;
+            will-change: transform;
+        }
+
+        @keyframes danmakuMove {
+            0% { 
+                transform: translateX(100vw);
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% { 
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <canvas id="fireworks"></canvas>
+    <button class="debug-btn" onclick="triggerFireworks()">测试烟花效果</button>
+    <div class="container">
+        <h1>2025年新年倒计时</h1>
+        <div class="countdowns-container">
+            <div class="countdown-section solar-countdown">
+                <div class="countdown-title">阳历新年</div>
+                <div class="countdown">
+                    <div class="time-block">
+                        <div id="solar-days" class="number">00</div>
+                        <div class="label">天</div>
+                    </div>
+                    <div class="time-block">
+                        <div id="solar-hours" class="number">00</div>
+                        <div class="label">时</div>
+                    </div>
+                    <div class="time-block">
+                        <div id="solar-minutes" class="number">00</div>
+                        <div class="label">分</div>
+                    </div>
+                    <div class="time-block">
+                        <div id="solar-seconds" class="number">00</div>
+                        <div class="label">秒</div>
+                    </div>
+                </div>
+            </div>
+            <div class="countdown-section lunar-countdown">
+                <div class="countdown-title">农历新年</div>
+                <div class="countdown">
+                    <div class="time-block">
+                        <div id="lunar-days" class="number">00</div>
+                        <div class="label">天</div>
+                    </div>
+                    <div class="time-block">
+                        <div id="lunar-hours" class="number">00</div>
+                        <div class="label">时</div>
+                    </div>
+                    <div class="time-block">
+                        <div id="lunar-minutes" class="number">00</div>
+                        <div class="label">分</div>
+                    </div>
+                    <div class="time-block">
+                        <div id="lunar-seconds" class="number">00</div>
+                        <div class="label">秒</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="music-player">
+        <div class="music-controls">
+            <button class="music-btn" onclick="toggleBackgroundMusic()">
+                <i class="fas fa-music"></i>
+            </button>
+            <button class="music-btn" onclick="toggleTickSound()">
+                <i class="fas fa-clock"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const wishes = [
+            // 传统祝福语
+            '新年快乐！', '恭贺新禧！', '万事如意！', '心想事成！',
+            '吉祥如意！', '财运亨通！', '阖家欢乐！', '福寿安康！',
+            // 添加更多现代祝福语
+            '新的一年更精彩！', '愿你梦想成真！', '前程似锦！', '步步高升！',
+            '身体健康！', '工作顺利！', '学业进步！', '生活美满！',
+            // 添加一些有趣的祝福
+            '越来越有钱！', '颜值永驻！', '暴富暴瘦！', '升职加薪！',
+            '脱单成功！', '事业腾飞！', '开开心心！', '平安喜乐！',
+            // 添加一些诗意的祝福
+            '岁岁平安！', '年年有余！', '福星高照！', '喜气洋洋！',
+            '前程似锦！', '锦绣前程！', '前途无量！', '前程万里！',
+            // 添加一些具体的祝福
+            '工资翻倍！', '升职加薪！', '事业有成！', '学业有成！',
+            '生意兴隆！', '财源广进！', '幸福美满！', '甜甜蜜蜜！'
+        ];
+
+        let prevSeconds = null;
+        let isMusicEnabled = true;
+        let bgMusic = null;
+        let particles = [];
+        let countdownInterval;
+        let isTickEnabled = true;
+        
+        const sounds = {
+            tick: null,
+            firework: null,
+            bell: null,
+            bgMusic: null
+        };
+
+        const canvas = document.getElementById('fireworks');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        async function loadSounds() {
+            try {
+                const soundUrls = {
+                    tick: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3',
+                    firework: './firework.MP3',
+                    bell: 'https://assets.mixkit.co/active_storage/sfx/1823/1823-preview.mp3'
+                };
+
+                await Promise.all(
+                    Object.entries(soundUrls).map(async ([key, url]) => {
+                        try {
+                            console.log(`开始加载音效: ${key}`);
+                            const audio = new Audio();
+                            
+                            const loadPromise = new Promise((resolve, reject) => {
+                                audio.addEventListener('canplaythrough', () => {
+                                    console.log(`${key} 音效加载完成`);
+                                    resolve();
+                                }, { once: true });
+                                
+                                audio.addEventListener('error', (e) => {
+                                    console.error(`${key} 音效加载失败:`, e);
+                                    reject(e);
+                                }, { once: true });
+                            });
+                            
+                            audio.src = url;
+                            audio.load();
+                            
+                            await loadPromise;
+                            sounds[key] = audio;
+                            console.log(`${key} 音效已准备就绪`);
+                            
+                        } catch (error) {
+                            console.error(`加载音效 ${key} 失败:`, error);
+                            sounds[key] = null;
+                        }
+                    })
+                );
+            } catch (error) {
+                console.error('加载音效时发生错误:', error);
+            }
+        }
+
+        function playSound(sound, volume = 0.3) {
+            if (!sound) {
+                console.log('没有找到音效');
+                return;
+            }
+            
+            try {
+                const newSound = sound.cloneNode();
+                newSound.volume = volume;
+                
+                newSound.addEventListener('ended', () => {
+                    newSound.remove();
+                }, { once: true });
+                
+                const playPromise = newSound.play();
+                if (playPromise) {
+                    playPromise.catch(error => {
+                        console.error('播放音效失败:', error);
+                    });
+                }
+            } catch (error) {
+                console.error('播放音效时发生错误:', error);
+            }
+        }
+
+        function toggleBackgroundMusic() {
+            isMusicEnabled = !isMusicEnabled;
+            const musicIcon = document.querySelector('.fa-music');
+            musicIcon.style.color = isMusicEnabled ? '#fff' : '#666';
+            
+            if (bgMusic) {
+                if (isMusicEnabled) {
+                    bgMusic.play().catch(err => console.log('播放音乐失败:', err));
+                } else {
+                    bgMusic.pause();
+                }
+            }
+        }
+
+        function toggleTickSound() {
+            isTickEnabled = !isTickEnabled;
+            const tickIcon = document.querySelector('.fa-clock');
+            tickIcon.style.color = isTickEnabled ? '#fff' : '#666';
+        }
+
+        async function initializePage() {
+            console.log('开始初始化页面');
+            try {
+                // 先加载音效
+                await loadSounds();
+                console.log('音效加载完成，继续初始化');
+                
+                requestAnimationFrame(() => {
+                    resizeCanvas();
+                    animate();
+                    countdownInterval = setInterval(updateCountdown, 1000);
+                    updateCountdown();
+                    
+                    setTimeout(() => {
+                        setInterval(createDanmaku, 2000);
+                    }, 1000);
+                });
+                
+                loadBackgroundMusic();
+            } catch (error) {
+                console.error('初始化页面时发生错误:', error);
+            }
+        }
+
+        function loadBackgroundMusic() {
+            const audio = new Audio('https://music.163.com/song/media/outer/url?id=524148556.mp3');
+            audio.loop = true;
+            bgMusic = audio;
+            
+            document.addEventListener('click', () => {
+                if (isMusicEnabled && bgMusic) {
+                    bgMusic.play().catch(err => console.log('无法自动播放音乐:', err));
+                }
+            }, { once: true });
+        }
+
+        function updateCountdown() {
+            const solarNewYear = new Date('2025-01-01T00:00:00').getTime();
+            const lunarNewYear = new Date('2025-01-29T00:00:00').getTime();
+            const now = new Date().getTime();
+            
+            const solarDifference = solarNewYear - now;
+            const lunarDifference = lunarNewYear - now;
+
+            function calculateTime(difference) {
+                return {
+                    days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                    hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                    minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+                    seconds: Math.floor((difference % (1000 * 60)) / 1000)
+                };
+            }
+
+            const solarTime = calculateTime(solarDifference);
+            const lunarTime = calculateTime(lunarDifference);
+
+            function updateDisplay(prefix, time) {
+                const elements = {
+                    days: document.getElementById(`${prefix}-days`),
+                    hours: document.getElementById(`${prefix}-hours`),
+                    minutes: document.getElementById(`${prefix}-minutes`),
+                    seconds: document.getElementById(`${prefix}-seconds`)
+                };
+
+                Object.entries(time).forEach(([key, value]) => {
+                    if (elements[key]) {
+                        elements[key].textContent = value.toString().padStart(2, '0');
+                        
+                        if (time.days === 0 && time.hours === 0 && 
+                            time.minutes === 0 && time.seconds <= 10) {
+                            elements[key].parentElement.classList.add('final-countdown');
+                        } else {
+                            elements[key].parentElement.classList.remove('final-countdown');
+                        }
+                    }
+                });
+            }
+
+            if (solarTime.seconds !== prevSeconds) {
+                if (isTickEnabled) {
+                    playSound(sounds.tick, 0.3);
+                }
+                prevSeconds = solarTime.seconds;
+            }
+
+            if (solarDifference < 0) {
+                document.querySelector('.solar-countdown').classList.add('hidden');
+                document.querySelector('.lunar-countdown').classList.add('centered');
+                document.querySelector('h1').textContent = '2025年农历新年倒计时';
+                
+                if (solarDifference >= -1000 && solarDifference < 0) {
+                    playSound(sounds.bell, 0.8);
+                    for (let i = 0; i < 10; i++) {
+                        setTimeout(() => {
+                            createFirework(Math.random() * canvas.width, Math.random() * canvas.height * 0.6);
+                            playSound(sounds.firework, 0.5);
+                        }, i * 300);
+                    }
+                }
+                
+                if (lunarDifference < 0) {
+                    document.querySelector('.lunar-countdown .countdown').innerHTML = '<h2 class="celebration-text">新年快乐！</h2>';
+                    if (lunarDifference >= -1000 && lunarDifference < 0) {
+                        const fireworksInterval = setInterval(() => {
+                            randomFireworks();
+                            playSound(sounds.firework, 0.5);
+                        }, 800);
+                        
+                        setTimeout(() => {
+                            clearInterval(fireworksInterval);
+                        }, 10000);
+                    }
+                    clearInterval(countdownInterval);
+                    return;
+                }
+                
+                updateDisplay('lunar', lunarTime);
+            } else {
+                updateDisplay('solar', solarTime);
+                updateDisplay('lunar', lunarTime);
+
+                if (solarTime.days === 0 && solarTime.hours === 0 && solarTime.minutes === 0) {
+                    document.querySelectorAll('.solar-countdown .time-block').forEach(block => {
+                        block.classList.add('animated');
+                    });
+                }
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 8,
+                    y: (Math.random() - 0.5) * 8
+                };
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.015;
+                
+                this.flicker = Math.random() * 0.2;
+                this.flickerDirection = 1;
+                
+                this.trail = [];
+                this.trailLength = 5;
+            }
+
+            draw() {
+                this.trail.forEach((pos, index) => {
+                    const alpha = (index / this.trail.length) * this.alpha * 0.5;
+                    ctx.save();
+                    ctx.globalAlpha = alpha;
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, 1.5, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                    ctx.restore();
+                });
+
+                ctx.save();
+                ctx.globalAlpha = this.alpha * (1 + this.flicker);
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            update() {
+                this.trail.push({x: this.x, y: this.y});
+                if (this.trail.length > this.trailLength) {
+                    this.trail.shift();
+                }
+
+                this.velocity.y += 0.05;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                
+                this.alpha -= this.decay;
+                
+                this.flicker += 0.05 * this.flickerDirection;
+                if (this.flicker >= 0.2 || this.flicker <= -0.2) {
+                    this.flickerDirection *= -1;
+                }
+            }
+        }
+
+        function createFirework(x, y) {
+            const colors = [
+                '#ff0000', '#00ff00', '#0000ff', 
+                '#ffff00', '#ff00ff', '#00ffff',
+                '#ff8800', '#ff0088', '#88ff00'
+            ];
+            const particleCount = Math.floor(Math.random() * 50) + 100;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            // 检查并播放音效
+            if (sounds.firework) {
+                const fireworkSound = sounds.firework.cloneNode();
+                fireworkSound.volume = 0.5;
+                fireworkSound.play().catch(error => {
+                    console.error('播放烟花音效失败:', error);
+                });
+            } else {
+                console.warn('烟花音效未加载或加载失败');
+            }
+            
+            // 创建烟花粒子
+            for (let i = 0; i < particleCount; i++) {
+                const angle = (i / particleCount) * Math.PI * 2;
+                const speed = Math.random() * 2 + 6;
+                const particle = new Particle(x, y, color);
+                particle.velocity.x = Math.cos(angle) * speed;
+                particle.velocity.y = Math.sin(angle) * speed;
+                particles.push(particle);
+            }
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles = particles.filter(particle => {
+                if (particle.alpha <= 0) return false;
+                particle.update();
+                particle.draw();
+                return true;
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        function randomFireworks() {
+            const numberOfFireworks = Math.floor(Math.random() * 3) + 1;
+            for (let i = 0; i < numberOfFireworks; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * (canvas.height * 0.6);
+                setTimeout(() => createFirework(x, y), i * 100);
+            }
+        }
+
+        function triggerFireworks() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => randomFireworks(), i * 300);
+            }
+        }
+
+        function showNewYearMessage(isLunar = false) {
+            const messages = [
+                '新年快乐！',
+                '恭贺新禧！',
+                '万事如意！',
+                '心想事成！',
+                '吉祥如意！'
+            ];
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            const element = document.querySelector(isLunar ? '.lunar-countdown .countdown' : '.solar-countdown .countdown');
+            element.innerHTML = `<h2 class="celebration-text">${randomMessage}</h2>`;
+            
+            const fireworksInterval = setInterval(() => {
+                for (let i = 0; i < 3; i++) {
+                    randomFireworks();
+                }
+            }, 500);
+
+            setTimeout(() => {
+                clearInterval(fireworksInterval);
+                setInterval(randomFireworks, 2000);
+            }, 30000);
+        }
+
+        function createDanmaku() {
+            if (!wishes || !wishes.length) return;
+            
+            const danmaku = document.createElement('div');
+            danmaku.className = 'danmaku';
+            danmaku.textContent = wishes[Math.floor(Math.random() * wishes.length)];
+            
+            const top = Math.random() * (window.innerHeight * 0.6) + (window.innerHeight * 0.2);
+            const duration = 12 + Math.random() * 4;
+            
+            danmaku.style.top = `${top}px`;
+            danmaku.style.animation = `danmakuMove ${duration}s linear`;
+            danmaku.style.opacity = '1';
+            
+            document.body.appendChild(danmaku);
+            
+            const cleanup = () => {
+                if (document.body.contains(danmaku)) {
+                    danmaku.remove();
+                }
+            };
+            
+            danmaku.addEventListener('animationend', cleanup);
+            setTimeout(cleanup, duration * 1000 + 1000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializePage();
+        });
+    </script>
+</body>
+</html>
